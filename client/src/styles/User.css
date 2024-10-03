@@ -1,0 +1,11 @@
+.user {
+  border: 1px solid gray;
+  background-color: black;
+  color: white;
+}
+
+.user p {
+  text-align: left;
+  padding: 5px;
+  margin: 0;
+}
