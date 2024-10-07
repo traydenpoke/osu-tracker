@@ -32,7 +32,7 @@ async function main() {
 	const loops = 1;
 
 	for (let i = 0; i < loops; i++) {
-		// if make : Rankings, r.cursor doesn't exist... ?
+		// if make type Rankings, r.cursor doesn't exist... ? it's returning more than Promise<Rankings> which is odd...
 		const r: any = await api.ranking.getRanking(
 			'osu',
 			'performance',
