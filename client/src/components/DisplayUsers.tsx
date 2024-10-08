@@ -1,26 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { userDB } from '../types';
 
-const DisplayUsers = () => {
-	const [usersDB, setUsersDB] = useState([]);
+interface AddUserProps {
+  databaseUsers: userDB[];
+}
 
-	async function getUsers(): Promise<void> {
-		if (usersDB.length !== 0) return;
+const DisplayUsers: React.FC<AddUserProps> = ({ databaseUsers }) => {
+  console.log(databaseUsers);
 
-		// users in db
-		const response = await fetch(
-			`http://localhost:5000/users/leaderboard/100`
-		);
-
-		const users = await response.json();
-		setUsersDB(users);
-		console.log(users);
-	}
-
-	useEffect(() => {
-		getUsers();
-	}, []);
-
-	return <div></div>;
+  return <div></div>;
 };
 
 export default DisplayUsers;
