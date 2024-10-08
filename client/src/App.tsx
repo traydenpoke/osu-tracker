@@ -4,6 +4,7 @@ import AddUser from './components/AddUser';
 import SearchBox from './components/SearchBox';
 import UserPrompt from './components/UserPrompt';
 import { userDB } from './types';
+import DisplayUsers from './components/DisplayUsers';
 
 function App() {
 	const [databaseUsers, setDatabaseUsers] = useState<userDB[]>([]);
@@ -27,6 +28,7 @@ function App() {
 				databaseUsers={databaseUsers}
 				setDatabaseUsers={setDatabaseUsers}
 			/>
+			<DisplayUsers />
 		</>
 	);
 }

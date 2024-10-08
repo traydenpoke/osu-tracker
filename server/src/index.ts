@@ -5,7 +5,12 @@ config();
 
 import fs from 'fs';
 import cors from 'cors';
-import { addUser, getUser, getUsers } from './controllers/userController';
+import {
+	addUser,
+	getUser,
+	getUsers,
+	getUsersLeaderboard,
+} from './controllers/userController';
 import mongoose from 'mongoose';
 
 const PORT = 5000;
@@ -27,52 +32,6 @@ interface apiToken {
 async function main() {
 	const token: apiToken = await setupAPI();
 	api = new Client(token.accessToken);
-	let ids: { [key: string]: string[] } = {}; // dictionary to store user IDs and their events
-	let cursor = null;
-	const loops = 1;
-
-	for (let i = 0; i < loops; i++) {
-		// if make type Rankings, r.cursor doesn't exist... ? it's returning more than Promise<Rankings> which is odd...
-		const r: any = await api.ranking.getRanking(
-			'osu',
-			'performance',
-			cursor ? { query: cursor } : {}
-		);
-		const ranking = r.ranking;
-
-		ranking.forEach((obj: { user: { id: string } }) => {
-			ids[obj.user.id] = [];
-		});
-		cursor = r.cursor;
-	}
-
-	async function fetchAndStoreEvents() {
-		const promises = Object.keys(ids).map(async (id) => {
-			const events = await api.users.getUserScores(
-				parseInt(id),
-				'recent',
-				{
-					query: {
-						mode: 'osu',
-					},
-				}
-			);
-			events.forEach((event) => {
-				if (event.pp > 500) {
-					ids[id].push(event.beatmapset.title);
-				}
-			});
-		});
-
-		await Promise.all(promises);
-		console.log(ids);
-	}
-
-	fetchAndStoreEvents();
-
-	return;
-
-	// initialize routes after osu! api object is initialized
 	setupRoutes();
 }
 
@@ -122,7 +81,8 @@ app.use(express.json());
 function setupRoutes() {
 	app.get('/users/:userID', getUser(api));
 	app.get('/users', getUsers);
-	app.post('/users/', addUser);
+	app.get('/users/leaderboard/:ranks', getUsersLeaderboard(api));
+	app.post('/users', addUser);
 
 	app.listen(PORT, () => {
 		console.log(`Server running on port ${PORT}`);

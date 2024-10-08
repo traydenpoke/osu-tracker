@@ -29,6 +29,69 @@ export const getUser =
 		}
 	};
 
+export const getUsersLeaderboard =
+	(api: Client) =>
+	async (req: Request, res: Response): Promise<void> => {
+		const ranks: number = parseInt(req.params.ranks);
+		const loops = Math.ceil(ranks / 50);
+		let ids: { [key: string]: string[] } = {}; // dictionary to store user IDs and their events
+		let cursor = null;
+		let idList: string[] = [];
+
+		try {
+			// Fetch user IDs
+			for (let i = 0; i < loops; i++) {
+				const r: any = await api.ranking.getRanking(
+					'osu',
+					'performance',
+					cursor ? { query: cursor } : {}
+				);
+				const ranking = r.ranking;
+
+				// only add array for users with play
+				ranking.forEach((obj: { user: { id: string } }) => {
+					// ids[obj.user.id] = [];
+					idList.push(obj.user.id);
+				});
+				cursor = r.cursor;
+			}
+
+			// Fetch and store events after collecting user IDs
+			await fetchAndStoreEvents(ids, idList, api);
+
+			res.send(ids);
+		} catch (error) {
+			console.log(error);
+			res.status(500).send({
+				error: 'Failed to fetch leaderboard or events.',
+			});
+		}
+	};
+
+// Separate function to fetch and store user events
+async function fetchAndStoreEvents(
+	ids: { [key: string]: string[] },
+	idList: string[],
+	api: Client
+) {
+	const promises = idList.map(async (id) => {
+		const events = await api.users.getUserScores(parseInt(id), 'recent', {
+			query: { mode: 'osu' },
+		});
+		events.forEach((event) => {
+			if (event.pp > 500) {
+				// keep track of users with scores > X pp
+				if (!ids[id]) {
+					ids[id] = [];
+				}
+				ids[id].push(event.beatmapset.title);
+			}
+		});
+	});
+
+	await Promise.all(promises);
+}
+
 export async function getUsers(req: Request, res: Response): Promise<void> {
 	const users = await User.find();
 	res.json(users);
