@@ -1,0 +1,22 @@
+.scores {
+  display: flex;
+  flex-wrap: wrap; /* Allows items to wrap to the next line */
+}
+
+.userScore {
+  border: 1px solid rgb(182, 160, 160);
+  border-radius: 5px;
+  margin: 10px; /* Margin between user scores */
+  padding: 10px; /* Padding inside each user score */
+  width: calc(50% - 20px); /* Adjust width for 2 per row with margin */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional: add some shadow for depth */
+  display: flex;
+  flex-direction: column; /* Arrange content vertically */
+  box-sizing: border-box; /* Ensures padding and border are included in width */
+}
+
+@media (max-width: 480px) {
+  .userScore {
+    width: calc(100% - 20px); /* 1 per row on very small screens */
+  }
+}

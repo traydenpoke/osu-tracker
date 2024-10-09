@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { userDB } from '../types';
 
 interface AddUserProps {
@@ -6,8 +5,6 @@ interface AddUserProps {
 }
 
 const DisplayUsers: React.FC<AddUserProps> = ({ databaseUsers }) => {
-  console.log(databaseUsers);
-
   return <div></div>;
 };
 
