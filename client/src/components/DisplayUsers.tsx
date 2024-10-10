@@ -1,11 +1,11 @@
 import { userDB } from '../types';
 
 interface AddUserProps {
-  databaseUsers: userDB[];
+	databaseUsers: userDB[];
 }
 
 const DisplayUsers: React.FC<AddUserProps> = ({ databaseUsers }) => {
-  return <div></div>;
+	return <div></div>;
 };
 
 export default DisplayUsers;
